@@ -1,0 +1,84 @@
+name: Build, Test & Release APK
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Test, Compile & Build Release APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Generate Release Signing Keystore
+        run: |
+          keytool -genkeypair -v \
+            -keystore app/release.keystore \
+            -alias coolnotch \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -storepass coolnotch \
+            -keypass coolnotch \
+            -dname "CN=CoolNotch, OU=Mobile, O=CoolNotch, L=SanFrancisco, S=CA, C=US"
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run Unit Tests
+        run: ./gradlew test --stacktrace
+
+      - name: Compile & Assemble Release APK
+        run: ./gradlew assembleRelease --stacktrace
+
+      - name: Verify APK Generated
+        run: |
+          ls -la app/build/outputs/apk/release/
+          APK_PATH=$(find app/build/outputs/apk/release/ -name "*.apk" | head -n 1)
+          echo "Found APK at: $APK_PATH"
+          if [ -z "$APK_PATH" ]; then
+            echo "Error: Release APK not found!"
+            exit 1
+          fi
+
+      - name: Upload Release APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CoolNotch-Release-APK
+          path: app/build/outputs/apk/release/*.apk
+          retention-days: 14
+
+      - name: Create GitHub Release with APK
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/arena/9205045d-cool-notch'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0-${{ github.run_number }}
+          name: "Cool Notch v1.0.0 (Build ${{ github.run_number }})"
+          body: |
+            ### Cool Notch Music Visualizer Release v1.0.0
+            - 🎵 Camera punch hole & notch music visualizer
+            - 🔘 Quick Settings Tile Service support (turn on/off anytime)
+            - 🎨 Dynamic album art palette extraction & cyber neon effects
+            - 📱 Auto-detection for camera cutout & custom notch positioning
+            - 🚀 Lightweight foreground overlay service with ultra-low battery consumption
+          files: app/build/outputs/apk/release/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

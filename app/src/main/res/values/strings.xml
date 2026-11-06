@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Cool Notch</string>
+    <string name="tile_label">Cool Notch</string>
+    <string name="tile_active_subtitle">Active</string>
+    <string name="tile_inactive_subtitle">Inactive</string>
+    <string name="media_listener_label">Cool Notch Media Detector</string>
+    <string name="channel_name">Visualizer Overlay Service</string>
+    <string name="channel_desc">Shows dynamic visualizer around camera notch when music is playing</string>
+    <string name="overlay_active_desc">Visualizer running around camera cutout</string>
+
+    <string name="title_enable">Enable Visualizer</string>
+    <string name="desc_enable">Show music visualizer around camera punch hole</string>
+    <string name="title_shape">Notch Shape &amp; Style</string>
+    <string name="title_position">Camera Hole Position</string>
+    <string name="title_colors">Color Palette Mode</string>
+    <string name="title_sizing">Size &amp; Thickness</string>
+    <string name="title_dynamics">Dynamics &amp; Sensitivity</string>
+    <string name="title_permissions">Required Permissions</string>
+
+    <string name="perm_overlay">Overlay Permission (Draw Over Apps)</string>
+    <string name="perm_audio">Microphone/Audio Permission (Audio FFT)</string>
+    <string name="perm_notification">Notification Access (Music &amp; Album Art)</string>
+
+    <string name="auto_detect">Auto-detect Camera Cutout</string>
+    <string name="detected_cutout_msg">Detected cutout at: </string>
+    <string name="no_cutout_detected">Hardware cutout API returned no notch. Using preset.</string>
+</resources>
