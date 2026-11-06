@@ -26,12 +26,16 @@ class VisualizerUnitTests {
     @Test
     fun testRainbowColorGeneration() {
         val redColor = ColorExtractor.getRainbowColor(0.0f)
-        val greenColor = ColorExtractor.getRainbowColor(0.33f)
-        val blueColor = ColorExtractor.getRainbowColor(0.66f)
+        val greenColor = ColorExtractor.getRainbowColor(0.333f)
+        val blueColor = ColorExtractor.getRainbowColor(0.666f)
 
-        assertNotNull(redColor)
-        assertNotNull(greenColor)
-        assertNotNull(blueColor)
+        // Verifies the method executes properly and returns valid ARGB colors with 255 alpha
+        val alphaRed = (redColor ushr 24) and 0xFF
+        assertEquals(255, alphaRed)
+        val alphaGreen = (greenColor ushr 24) and 0xFF
+        assertEquals(255, alphaGreen)
+        val alphaBlue = (blueColor ushr 24) and 0xFF
+        assertEquals(255, alphaBlue)
     }
 
     @Test

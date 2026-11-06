@@ -45,7 +45,27 @@ object ColorExtractor {
      * Generate rainbow colors interpolated along circle degrees.
      */
     fun getRainbowColor(fraction: Float): Int {
-        val hsv = floatArrayOf((fraction * 360f) % 360f, 0.9f, 1.0f)
-        return android.graphics.Color.HSVToColor(hsv)
+        val h = ((fraction * 360f) % 360f + 360f) % 360f
+        val s = 0.9f
+        val v = 1.0f
+
+        val c = v * s
+        val x = c * (1 - kotlin.math.abs((h / 60f) % 2 - 1))
+        val m = v - c
+
+        val (rPrime, gPrime, bPrime) = when ((h / 60f).toInt()) {
+            0 -> Triple(c, x, 0f)
+            1 -> Triple(x, c, 0f)
+            2 -> Triple(0f, c, x)
+            3 -> Triple(0f, x, c)
+            4 -> Triple(x, 0f, c)
+            else -> Triple(c, 0f, x)
+        }
+
+        val r = ((rPrime + m) * 255).toInt()
+        val g = ((gPrime + m) * 255).toInt()
+        val b = ((bPrime + m) * 255).toInt()
+
+        return (0xFF shl 24) or (r shl 16) or (g shl 8) or b
     }
 }
